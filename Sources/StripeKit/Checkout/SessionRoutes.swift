@@ -49,7 +49,9 @@ public protocol SessionRoutes {
     /// - Returns: Returns a Session object.
     func create(lineItems: [[String: Any]]?,
                 mode: SessionMode,
-                successUrl: String,
+				uiMode: SessionUIMode,
+                successUrl: String?,
+				returnUrl: String?,
                 cancelUrl: String?,
                 clientReferenceId: String?,
                 currency: Currency?,
@@ -87,7 +89,7 @@ public protocol SessionRoutes {
     /// After it expires, a customer can’t complete a Session and customers loading the Session see a message saying the Session is expired.
     /// - Parameters:
     ///   - id: The ID of the Checkout Session.
-    ///   - expand: An aray of properties to expand.
+    ///   - expand: An array of properties to expand.
     /// - Returns: Returns a Session object if the expiration succeeded. Returns an error if the Session has already expired or isn’t in an expireable state.
     func expire(id: String, expand: [String]?) async throws -> Session
     
@@ -123,7 +125,9 @@ public struct StripeSessionRoutes: SessionRoutes {
     
     public func create(lineItems: [[String: Any]]? = nil,
                        mode: SessionMode,
-                       successUrl: String,
+					   uiMode: SessionUIMode,
+                       successUrl: String?,
+					   returnUrl: String?,
                        cancelUrl: String? = nil,
                        clientReferenceId: String? = nil,
                        currency: Currency? = nil,
@@ -155,8 +159,17 @@ public struct StripeSessionRoutes: SessionRoutes {
                        subscriptionData: [String: Any]? = nil,
                        taxIdCollection: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> Session {
-        var body: [String: Any] = ["mode": mode.rawValue,
-                                   "success_url": successUrl]
+
+		var body: [String: Any] = ["mode": mode.rawValue, "ui_mode": uiMode]
+
+		if let successUrl {
+			body["success_url"] = successUrl
+		}
+
+		if let returnUrl {
+			body["return_url"] = returnUrl
+		}
+
         if let lineItems {
             body["line_items"] = lineItems
         }
