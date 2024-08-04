@@ -97,7 +97,7 @@ public protocol SessionRoutes {
     ///
     /// - Parameters:
     ///   - id: The ID of the Checkout Session.
-    ///   - expand: An aray of properties to expand.
+    ///   - expand: An array of properties to expand.
     /// - Returns: Returns a Session object
     func retrieve(id: String, expand: [String]?) async throws -> Session
     
