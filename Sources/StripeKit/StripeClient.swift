@@ -124,7 +124,7 @@ public final class StripeClient {
     var handler: StripeAPIHandler
     
     /// Returns a StripeClient used to interact with the Stripe APIs.
-    /// - Parameter httpClient: An `HTTPClient`used to communicate wiith the Stripe API
+    /// - Parameter httpClient: An `HTTPClient`used to communicate with the Stripe API
     /// - Parameter apiKey: A Stripe API key.
     public init(httpClient: HTTPClient, apiKey: String) {
         handler = StripeAPIHandler(httpClient: httpClient, apiKey: apiKey)

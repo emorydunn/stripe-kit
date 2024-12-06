@@ -26,14 +26,26 @@ public struct Session: Codable {
     public var metadata: [String: String]?
     /// The mode of the Checkout Session, one of `payment`, `setup`, or `subscription`.
     public var mode: SessionMode?
+
+	/// The UI mode of the Session.
+	///
+	/// Defaults to `hosted`.
+	public var uiMode: SessionUIMode?
     /// The ID of the PaymentIntent created if SKUs or line items were provided.
     @Expandable<PaymentIntent> public var paymentIntent: String?
     /// The payment status of the Checkout Session, one of `paid`, `unpaid`, or `no_payment_required`. You can use this value to decide when to fulfill your customer’s order.
     public var paymentStatus: SessionPaymentStatus?
     /// The status of the Checkout Session, one of `open`, `complete`, or `expired`.
     public var status: SessionStatus?
-    /// The URL the customer will be directed to after the payment or subscription creation is successful.
+    
+	/// The URL to which Stripe should send customers when payment or setup is complete.
+	///
+	/// This parameter is not allowed if `ui_mode` is `embedded`. If you’d like to use information from the successful Checkout Session on your page, read the guide on customizing your success page.
     public var successUrl: String?
+	/// The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method’s app or site.
+	///
+	/// This parameter is required if `ui_mode` is `embedded` and redirect-based payment methods are enabled on the session.
+	public var returnUrl: String?
     /// The URL to the Checkout Session.
     public var url: String?
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -99,7 +111,7 @@ public struct Session: Codable {
     /// Shipping information for this Checkout Session.
     public var shippingDetails: ShippingLabel?
     /// The shipping rate options applied to this Session.
-    public var shipppingOptions: [SessionShippingOption]?
+    public var shippingOptions: [SessionShippingOption]?
     /// Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. `submit_type` can only be specified on Checkout Sessions in `payment` mode, but not Checkout Sessions in `subscription` or `setup` mode.
     public var submitType: SessionSubmitType?
     /// The ID of the subscription created if one or more plans were provided.
@@ -108,7 +120,9 @@ public struct Session: Codable {
     public var taxIdCollection: SessionTaxIdCollection?
     /// Tax and discount details for the computed total amount.
     public var totalDetails: SessionTotalDetails?
-    
+	/// Client secret to be used when initializing Stripe.js embedded checkout.
+	public var clientSecret: String?
+
     public init(id: String,
                 cancelUrl: String? = nil,
                 clientReferenceId: String? = nil,
@@ -118,10 +132,12 @@ public struct Session: Codable {
                 lineItems: SessionLineItemList? = nil,
                 metadata: [String : String]? = nil,
                 mode: SessionMode? = nil,
+				uiMode: SessionUIMode? = nil,
                 paymentIntent: String? = nil,
                 paymentStatus: SessionPaymentStatus? = nil,
                 status: SessionStatus? = nil,
                 successUrl: String? = nil,
+				returnUrl: String? = nil,
                 url: String? = nil,
                 object: String? = nil,
                 afterExpiration: SessionAfterExpiration? = nil,
@@ -154,7 +170,7 @@ public struct Session: Codable {
                 shippingRate: String? = nil,
                 shippingCost: SessionShippingCost? = nil,
                 shippingDetails: ShippingLabel? = nil,
-                shipppingOptions: [SessionShippingOption]? = nil,
+                shippingOptions: [SessionShippingOption]? = nil,
                 submitType: SessionSubmitType? = nil,
                 subscription: String? = nil,
                 taxIdCollection: SessionTaxIdCollection? = nil,
@@ -168,10 +184,12 @@ public struct Session: Codable {
         self.lineItems = lineItems
         self.metadata = metadata
         self.mode = mode
+		self.uiMode = uiMode
         self._paymentIntent = Expandable(id: paymentIntent)
         self.paymentStatus = paymentStatus
         self.status = status
         self.successUrl = successUrl
+		self.returnUrl = returnUrl
         self.url = url
         self.object = object
         self.afterExpiration = afterExpiration
@@ -204,7 +222,7 @@ public struct Session: Codable {
         self._shippingRate = Expandable(id: shippingRate)
         self.shippingCost = shippingCost
         self.shippingDetails = shippingDetails
-        self.shipppingOptions = shipppingOptions
+        self.shippingOptions = shippingOptions
         self.submitType = submitType
         self._subscription = Expandable(id: subscription)
         self.taxIdCollection = taxIdCollection
@@ -719,6 +737,17 @@ public enum SessionMode: String, Codable {
     case setup
     /// Use Stripe Billing to set up fixed-price subscriptions.
     case subscription
+}
+
+public enum SessionUIMode: String, Codable {
+	/// The Checkout Session will be displayed as an embedded form on the merchant’s website.
+	case embedded
+
+	/// The Checkout Session will be displayed on a hosted page that customers will be redirected to.
+	case hosted
+
+	/// The Checkout Session is part of a custom checkout page  on the merchant’s website.
+	case custom
 }
 
 
