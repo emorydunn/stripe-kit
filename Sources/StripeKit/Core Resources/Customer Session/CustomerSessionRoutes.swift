@@ -33,6 +33,10 @@ public struct StripeCustomerSessionRoutes: CustomerSessionRoutes {
         body["customer"] = customer
         body["components[buy_button][enabled]"] = components.buyButton.enabled
         body["components[payment_element][enabled]"] = components.paymentElement.enabled
+		body["components[payment_element][features][payment_method_redisplay]"] = "enabled"
+		body["components[payment_element][features][payment_method_remove]"] = "enabled"
+		body["components[payment_element][features][payment_method_save]"] = "enabled"
+		body["components[payment_element][features][payment_method_save_usage]"] = "off_session"
         body["components[pricing_table][enabled]"] = components.pricingTable.enabled
         
         if let expand {
