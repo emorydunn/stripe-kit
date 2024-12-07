@@ -10,7 +10,7 @@ public struct Components: Codable {
     
     public enum ComponentsType {
         case buyButton
-        case payementElement
+        case paymentElement
         case pricingTable
     }
     
@@ -26,7 +26,7 @@ public struct Components: Codable {
     init(enable type: ComponentsType) {
 
         self.buyButton = ComponentEnabled(type == .buyButton)
-        self.paymentElement = PaymentComponentEnabled(type == .payementElement)
+        self.paymentElement = PaymentComponentEnabled(type == .paymentElement)
         self.pricingTable = ComponentEnabled(type == .pricingTable)
     }
 }
