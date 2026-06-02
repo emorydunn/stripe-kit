@@ -746,8 +746,8 @@ public enum SessionUIMode: String, Codable {
 	/// The Checkout Session will be displayed on a hosted page that customers will be redirected to.
 	case hosted
 
-	/// The Checkout Session is part of a custom checkout page  on the merchant’s website.
-	case custom
+	/// The Checkout Session is displayed using Checkout elements on your website.
+	case elements
 }
 
 
