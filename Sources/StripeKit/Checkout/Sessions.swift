@@ -741,10 +741,10 @@ public enum SessionMode: String, Codable {
 
 public enum SessionUIMode: String, Codable {
 	/// The Checkout Session will be displayed as an embedded form on the merchant’s website.
-	case embedded
+	case embedded = "embedded_page"
 
 	/// The Checkout Session will be displayed on a hosted page that customers will be redirected to.
-	case hosted
+	case hosted = "hosted_page"
 
 	/// The Checkout Session is displayed using [Checkout elements](https://docs.stripe.com/checkout/custom/quickstart) on your website.
 	case elements
