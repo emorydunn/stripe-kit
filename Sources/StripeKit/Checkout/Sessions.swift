@@ -746,7 +746,7 @@ public enum SessionUIMode: String, Codable {
 	/// The Checkout Session will be displayed on a hosted page that customers will be redirected to.
 	case hosted
 
-	/// The Checkout Session is displayed using Checkout elements on your website.
+	/// The Checkout Session is displayed using [Checkout elements](https://docs.stripe.com/checkout/custom/quickstart) on your website.
 	case elements
 }
 
