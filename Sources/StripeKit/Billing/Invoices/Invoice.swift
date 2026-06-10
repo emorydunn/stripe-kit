@@ -38,8 +38,13 @@ public struct Invoice: Codable {
     public var periodStart: Date?
     /// The status of the invoice, one of `draft`, `open`, `paid`, `uncollectible`, or `void`. [Learn more](https://stripe.com/docs/billing/invoices/workflow#workflow-overview)
     public var status: InvoiceStatus?
-    /// The subscription that this invoice was prepared for, if any.
+	public var parent: InvoiceParent?
+
+	@available(*, deprecated, message: "Use .parent instead")
+	/// The subscription that this invoice was prepared for, if any.
     @Expandable<Subscription> public var subscription: String?
+
+	@available(*, deprecated, message: "Use .parent instead")
 	/// Details about the subscription that created this invoice.
 	public var subscriptionDetails: SubscriptionDetails?
     /// Total after discount.
@@ -128,6 +133,7 @@ public struct Invoice: Codable {
     public var postPaymentCreditNotesAmount: Int?
     /// Total amount of all pre-payment credit notes issued for this invoice.
     public var prePaymentCreditNotesAmount: Int?
+	@available(*, deprecated, message: "Use .parent instead")
     /// The quote this invoice was generated from.
     @Expandable<Quote> public var quote: String?
     /// This is the transaction number that appears on email receipts sent for this invoice.
@@ -181,6 +187,7 @@ public struct Invoice: Codable {
                 status: InvoiceStatus? = nil,
                 subscription: String? = nil,
 				subscriptionDetails: SubscriptionDetails? = nil,
+				parent: InvoiceParent? = nil,
                 total: Int? = nil,
                 object: String,
                 accountCountry: String? = nil,
@@ -256,6 +263,7 @@ public struct Invoice: Codable {
         self.periodEnd = periodEnd
         self.periodStart = periodStart
         self.status = status
+		self.parent = parent
         self._subscription = Expandable(id: subscription)
 		self.subscriptionDetails = subscriptionDetails
         self.total = total
@@ -325,10 +333,36 @@ public struct Invoice: Codable {
 public struct SubscriptionDetails: Codable {
 	/// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
 	public var metadata: [String: String]?
-	
+
+	/// The subscription that this invoice was prepared for, if any.
+	@Expandable<Subscription> public var subscription: String?
+
+	/// The subscription that this invoice was prepared for, if any.
+	public var subscriptionProrationDate: Date?
+
 	public init(metadata: [String: String]? = nil) {
 		self.metadata = metadata
 	}
+}
+
+public struct QuoteDetails: Codable {
+	/// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+	public var quote: String
+
+	public init(quote: String) {
+		self.quote = quote
+	}
+}
+
+public struct InvoiceParent: Codable {
+	public enum ParentType: String, Codable {
+		case quote = "quote_details"
+		case subscription = "subscription_details"
+	}
+
+	public let type: ParentType
+	public let subscriptionDetails: SubscriptionDetails?
+	public let quoteDetails: QuoteDetails?
 }
 
 public enum InvoiceCollectionMethod: String, Codable {
